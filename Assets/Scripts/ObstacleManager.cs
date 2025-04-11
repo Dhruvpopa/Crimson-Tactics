@@ -3,7 +3,7 @@ using UnityEngine;
 public class ObstacleManager : MonoBehaviour
 {
     public ObstacleData obstacleData;
-    public GameObject obstaclePrefab; // Use a red sphere or cube
+    public GameObject obstaclePrefab; 
 
     void Start()
     {
