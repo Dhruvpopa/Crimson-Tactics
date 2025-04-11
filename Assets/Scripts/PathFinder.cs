@@ -1,9 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Pathfinder : MonoBehaviour
 {
     public static Pathfinder Instance;
+
+    public ObstacleData obstacleData; // ← Assign this in Inspector
 
     private void Awake()
     {
@@ -14,11 +16,15 @@ public class Pathfinder : MonoBehaviour
     {
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
         Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+
         queue.Enqueue(start);
         cameFrom[start] = start;
 
         Vector2Int[] directions = {
-            Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
         };
 
         while (queue.Count > 0)
@@ -31,7 +37,7 @@ public class Pathfinder : MonoBehaviour
             foreach (var dir in directions)
             {
                 Vector2Int next = current + dir;
-                if (IsInBounds(next) && !cameFrom.ContainsKey(next))
+                if (IsInBounds(next) && !IsBlocked(next) && !cameFrom.ContainsKey(next))
                 {
                     queue.Enqueue(next);
                     cameFrom[next] = current;
@@ -43,6 +49,7 @@ public class Pathfinder : MonoBehaviour
 
         List<Vector2Int> path = new List<Vector2Int>();
         Vector2Int step = target;
+
         while (step != start)
         {
             path.Add(step);
@@ -57,5 +64,12 @@ public class Pathfinder : MonoBehaviour
     {
         return pos.x >= 1 && pos.x <= 10 && pos.y >= 1 && pos.y <= 10;
     }
-}
 
+    bool IsBlocked(Vector2Int pos)
+    {
+        if (obstacleData == null) return false;
+
+        int index = (pos.y - 1) * 10 + (pos.x - 1);
+        return obstacleData.obstacleMap[index];
+    }
+}
